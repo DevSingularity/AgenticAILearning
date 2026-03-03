@@ -2,8 +2,16 @@ from phi.agent import Agent
 from phi.model.groq import Groq
 from phi.tools.yfinance import YFinanceTools
 from phi.tools.duckduckgo import DuckDuckGo
+from dotenv import load_dotenv
+import phi
+import os
+from phi.playground import Playground, serve_playground_app
 
-# This is for accessing the agent through CLI
+load_dotenv()
+
+phi.api=os.getenv("PHIDATA_API_KEY")
+
+# This is for accessing the agent through Phidata
 # Use a valid Groq chat model
 model = Groq(id="llama-3.1-8b-instant")
 
@@ -30,7 +38,7 @@ financial_intelligence_agent = Agent(
     markdown=True,
 )
 
-financial_intelligence_agent.print_response(
-    "Summarize analyst recommendation and share latest news for NVIDIA",
-    stream=False
-)
+app=Playground(agents=[financial_intelligence_agent]).get_app()
+
+if __name__=="__main__":
+    serve_playground_app("playground:app", reload=True)
